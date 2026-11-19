@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gaussian Grading System | Normal Distribution &amp; Statistical Modeling</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand-mark">∿</div>
+  <div class="brand-copy">
+    <span>PARAMETRIC EXAMINATION ASSESSMENT &amp; NORMAL DISTRIBUTION ANALYSIS</span>
+    <h1>Gaussian Grading System</h1>
+  </div>
+</header>
+
+<main class="container">
+  <section class="intro">
+    <div class="intro-content">
+      <p class="eyebrow">PARAMETRIC NORM-REFERENCED ASSESSMENT FRAMEWORK</p>
+      <h2>Gaussian Distribution Grade Boundary Modeling</h2>
+      <p>Continuous probability density modeling of examination marks using the normal distribution <i>N</i>(μ, σ²). Automatically computes standard scores (<i>z</i>-scores), central moments, dispersion metrics, and empirical versus theoretical cumulative percentile partitions.</p>
+    </div>
+    <div class="intro-icon"><i>f</i>(<i>x</i>)</div>
+  </section>
+
+  <!-- Mathematical Theoretical Framework Card -->
+  <section class="card math-theory-card">
+    <div class="section-heading">
+      <div>
+        <h3>Mathematical Formulation &amp; Theoretical Framework</h3>
+        <p>Core equations governing parametric continuous distribution grading.</p>
+      </div>
+      <button id="toggleMathBtn" class="btn btn-light btn-sm">Hide Theory</button>
+    </div>
+    <div class="math-grid" id="mathGrid">
+      <div class="math-box">
+        <span class="math-tag">PROBABILITY DENSITY FUNCTION (PDF)</span>
+        <div class="math-formula">
+          <div class="math-equation">
+            <span class="math-fn">f(x; μ, σ)</span>
+            <span class="math-eq">=</span>
+            <div class="math-frac">
+              <span class="frac-top">1</span>
+              <span class="frac-bot">σ &radic;<span style="border-top: 1px solid currentColor; padding-top: 1px;">2&pi;</span></span>
+            </div>
+            <span class="math-exp">e<sup>&minus;&frac12; ((x &minus; μ) / σ)&sup2;</sup></span>
+          </div>
+        </div>
+        <p class="math-desc">Models the continuous marks distribution <i>X</i> &sim; <i>N</i>(μ, σ²) where μ is the central location parameter (mean) and σ &gt; 0 is the scale parameter (standard deviation).</p>
+      </div>
+
+      <div class="math-box">
+        <span class="math-tag">STANDARDIZED VARIABLE (Z-SCORE)</span>
+        <div class="math-formula">
+          <div class="math-equation">
+            <span class="math-sym">z<sub>i</sub></span>
+            <span class="math-eq">=</span>
+            <div class="math-frac">
+              <span class="frac-top">x<sub>i</sub> &minus; μ</span>
+              <span class="frac-bot">σ</span>
+            </div>
+            <span class="math-eq">&sim;</span>
+            <span class="math-sym"><i>N</i>(0, 1)</span>
+          </div>
+        </div>
+        <p class="math-desc">Transforms raw score <i>x<sub>i</sub></i> into a dimensionless standard score representing signed distance from μ in units of population dispersion σ.</p>
+      </div>
+
+      <div class="math-box">
+        <span class="math-tag">CUMULATIVE DISTRIBUTION FUNCTION (CDF)</span>
+        <div class="math-formula">
+          <div class="math-equation">
+            <span class="math-sym">&Phi;(z)</span>
+            <span class="math-eq">=</span>
+            <span class="math-fn">P(Z &le; z)</span>
+            <span class="math-eq">=</span>
+            <span class="math-num">&frac12;</span>
+            <span class="math-group">[ 1 + erf( <span class="math-frac"><span class="frac-top">z</span><span class="frac-bot">&radic;2</span></span> ) ]</span>
+          </div>
+        </div>
+        <p class="math-desc">Quantifies theoretical Gaussian percentile rank of score <i>x<sub>i</sub></i> via the Gauss error function erf(<i>u</i>).</p>
+      </div>
+
+      <div class="math-box">
+        <span class="math-tag">HIGHER CENTRAL MOMENTS</span>
+        <div class="math-formula">
+          <div class="math-equation">
+            <span class="math-sym">&gamma;<sub>1</sub></span>
+            <span class="math-eq">=</span>
+            <div class="math-frac">
+              <span class="frac-top">m<sub>3</sub></span>
+              <span class="frac-bot">σ<sup>3</sup></span>
+            </div>
+            <span class="math-sep">,</span>
+            <span class="math-sym">&gamma;<sub>2</sub></span>
+            <span class="math-eq">=</span>
+            <div class="math-frac">
+              <span class="frac-top">m<sub>4</sub></span>
+              <span class="frac-bot">σ<sup>4</sup></span>
+            </div>
+            <span class="math-eq">&minus;</span>
+            <span class="math-num">3</span>
+          </div>
+        </div>
+        <p class="math-desc">Fisher-Pearson skewness γ₁ measures asymmetry; excess kurtosis γ₂ evaluates tail weight relative to mesokurtic normal reference (γ₂ = 0).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Execution Process Card -->
+  <section class="process-card card">
+    <div class="section-heading">
+      <div>
+        <h3>Algorithmic Execution Pipeline</h3>
+        <p>Sequential mathematical stages for data ingestion, moment estimation, and boundary partitioning.</p>
+      </div>
+      <button id="runBtn" class="btn btn-primary">▶ Run grading process</button>
+    </div>
+    <div class="steps" id="steps">
+      <div class="step" data-step="0"><span>01</span><b>Discrete Sample</b><small>Vector x = [x₁, ..., xₙ]</small></div>
+      <div class="step" data-step="1"><span>02</span><b>Domain Support</b><small>Bounds xᵢ ∈ [0, 100]</small></div>
+      <div class="step" data-step="2"><span>03</span><b>Sample Moments</b><small>Mean μ, Std σ, Var σ²</small></div>
+      <div class="step" data-step="3"><span>04</span><b>Gaussian PDF</b><small>Bell Curve f(x; μ, σ)</small></div>
+      <div class="step" data-step="4"><span>05</span><b>z-Partitioning</b><small>Thresholds ±0.5σ, ±1.5σ</small></div>
+      <div class="step" data-step="5"><span>06</span><b>CDF Φ(z) Report</b><small>Empirical vs Theoretical %</small></div>
+    </div>
+    <div class="progress-track"><div id="progressBar"></div></div>
+    <p id="processMessage" class="process-message" aria-live="polite">Pipeline ready. Click "Run grading process" to execute the statistical model.</p>
+  </section>
+
+  <!-- Statistical Moments & Metrics Dashboard -->
+  <section class="metrics-section">
+    <div class="metrics-group-title">
+      <h4>Measures of Central Tendency &amp; Sample Size</h4>
+    </div>
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span>Sample Size (N)</span>
+        <strong id="totalStudents">—</strong>
+        <small>Degrees of freedom: ν = N − 1</small>
+      </article>
+      <article class="stat-card">
+        <span>Arithmetic Mean (μ)</span>
+        <strong id="meanValue">—</strong>
+        <small>Cohort central score Σ xᵢ / N</small>
+      </article>
+      <article class="stat-card">
+        <span>Median (x̃ = Q₂)</span>
+        <strong id="medianValue">—</strong>
+        <small>50th percentile (P₅₀)</small>
+      </article>
+      <article class="stat-card">
+        <span>Quartiles (Q₁, Q₃)</span>
+        <strong id="quartilesValue">—</strong>
+        <small>25th &amp; 75th percentiles (IQR)</small>
+      </article>
+    </div>
+
+    <div class="metrics-group-title">
+      <h4>Measures of Dispersion &amp; Variation</h4>
+    </div>
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span>Population Std. Dev. (σ)</span>
+        <strong id="stdValue">—</strong>
+        <small>Root-mean-square deviation</small>
+      </article>
+      <article class="stat-card">
+        <span>Sample Std. Dev. (s)</span>
+        <strong id="sampleStdValue">—</strong>
+        <small>Bessel corrected (ddof = 1)</small>
+      </article>
+      <article class="stat-card">
+        <span>Population Variance (σ²)</span>
+        <strong id="varianceValue">—</strong>
+        <small>Second central moment Var(X)</small>
+      </article>
+      <article class="stat-card">
+        <span>Standard Error of Mean (SE)</span>
+        <strong id="semValue">—</strong>
+        <small>Sampling variability s / √N</small>
+      </article>
+    </div>
+
+    <div class="metrics-group-title">
+      <h4>Distribution Shape &amp; Score Range</h4>
+    </div>
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span>Skewness (γ₁)</span>
+        <strong id="skewnessValue">—</strong>
+        <small>Fisher-Pearson asymmetry coefficient</small>
+      </article>
+      <article class="stat-card">
+        <span>Excess Kurtosis (γ₂)</span>
+        <strong id="kurtosisValue">—</strong>
+        <small>Mesokurtic normal reference: 0</small>
+      </article>
+      <article class="stat-card">
+        <span>Coefficient of Variation (CV)</span>
+        <strong id="cvValue">—</strong>
+        <small>Relative dispersion (σ/μ) × 100%</small>
+      </article>
+      <article class="stat-card">
+        <span>Score Range (Δx)</span>
+        <strong id="rangeValue">—</strong>
+        <small>Cohort spread [x_min, x_max]</small>
+      </article>
+    </div>
+  </section>
+
+  <!-- Content Grid: Input Table and Chart -->
+  <section class="content-grid">
+    <article class="card">
+      <div class="section-heading">
+        <div>
+          <h3>Empirical Sample Input (x)</h3>
+          <p>Discrete examination scores xᵢ ∈ [0, 100].</p>
+        </div>
+        <div class="mini-actions">
+          <button class="btn btn-light btn-sm" id="addStudent">+ Add Student</button>
+          <label class="btn btn-light btn-sm upload-label">Import CSV<input type="file" id="csvFile" accept=".csv"></label>
+        </div>
+      </div>
+
+      <!-- Quick Dataset Presets Selector -->
+      <div class="dataset-presets">
+        <span class="preset-label">📊 Cohort Datasets:</span>
+        <button class="preset-btn active" id="presetStandard" title="Load standard cohort of 60 students">Standard (60)</button>
+        <button class="preset-btn" id="presetLarge" title="Load large university cohort of 100 students">Large (100)</button>
+        <button class="preset-btn" id="presetHonors" title="Load high-performing honors cohort">Honors Class (50)</button>
+        <button class="preset-btn" id="presetChallenging" title="Load challenging exam cohort">Challenging Exam (50)</button>
+        <button class="preset-btn" id="presetCustom" title="Synthesize custom Gaussian distribution">⚡ Synthesize</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 48%;">Register Number</th>
+              <th style="width: 36%;">Marks / 100 (xᵢ)</th>
+              <th style="width: 16%; text-align: center;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="studentBody">
+          {% for s in students %}
+            <tr>
+              <td><input class="reg-input" value="{{ s.Register_No }}" aria-label="Register number"></td>
+              <td><input class="mark-input" type="number" min="0" max="100" step="0.01" value="{{ s.Marks }}" aria-label="Marks"></td>
+              <td style="text-align: center;"><button class="remove-row" title="Remove student">×</button></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <span id="recordCount">Loading records…</span>
+        <button id="resetSample" class="text-button">Reset to default 60 cohort</button>
+      </div>
+    </article>
+
+    <article class="card chart-card">
+      <div class="section-heading">
+        <div>
+          <h3>Probability Density &amp; Empirical Frequency</h3>
+          <p>Superimposition of discrete histogram and continuous Gaussian curve f(x).</p>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="gaussianChart"></canvas>
+        <div id="chartPlaceholder" class="chart-placeholder">
+          Click "Run grading process" to compute and plot the Gaussian density curve.
+        </div>
+      </div>
+      <div class="legend">
+        <span><i class="dot blue"></i> Empirical Histogram H(x)</span>
+        <span><i class="dot purple"></i> Gaussian PDF N · Δx · f(x)</span>
+        <span><i class="dot dark"></i> Sample Mean (μ)</span>
+      </div>
+    </article>
+  </section>
+
+  <!-- Calculated Grade Boundaries Card -->
+  <section class="card results-card">
+    <div class="section-heading">
+      <div>
+        <h3>Parametric Grade Cutoff Thresholds (k-Sigma Partitions)</h3>
+        <p>Theoretical Gaussian partitions and actual empirical allocations.</p>
+      </div>
+      <span class="result-status" id="resultStatus">Awaiting Execution</span>
+    </div>
+
+    <div class="boundary-grid" id="boundaryGrid">
+      <div class="boundary">
+        <div class="boundary-header"><b>A+</b><span class="badge">Top Grade</span></div>
+        <span class="math-rule">x &ge; μ + 1.5σ</span>
+        <span class="z-rule">z &ge; +1.50</span>
+        <strong class="cutoff">—</strong>
+        <small class="prob-tag">Theoretical: 6.68%</small>
+        <div class="emp-stat">—</div>
+      </div>
+      <div class="boundary">
+        <div class="boundary-header"><b>A</b><span class="badge">High Merit</span></div>
+        <span class="math-rule">μ + 0.5σ &le; x &lt; μ + 1.5σ</span>
+        <span class="z-rule">+0.50 &le; z &lt; +1.50</span>
+        <strong class="cutoff">—</strong>
+        <small class="prob-tag">Theoretical: 24.17%</small>
+        <div class="emp-stat">—</div>
+      </div>
+      <div class="boundary">
+        <div class="boundary-header"><b>B</b><span class="badge">Average</span></div>
+        <span class="math-rule">μ &minus; 0.5σ &le; x &lt; μ + 0.5σ</span>
+        <span class="z-rule">&minus;0.50 &le; z &lt; +0.50</span>
+        <strong class="cutoff">—</strong>
+        <small class="prob-tag">Theoretical: 38.29%</small>
+        <div class="emp-stat">—</div>
+      </div>
+      <div class="boundary">
+        <div class="boundary-header"><b>C</b><span class="badge">Low Pass</span></div>
+        <span class="math-rule">μ &minus; 1.5σ &le; x &lt; μ &minus; 0.5σ</span>
+        <span class="z-rule">&minus;1.50 &le; z &lt; &minus;0.50</span>
+        <strong class="cutoff">—</strong>
+        <small class="prob-tag">Theoretical: 24.17%</small>
+        <div class="emp-stat">—</div>
+      </div>
+      <div class="boundary">
+        <div class="boundary-header"><b>D</b><span class="badge">Remedial</span></div>
+        <span class="math-rule">x &lt; μ &minus; 1.5σ</span>
+        <span class="z-rule">z &lt; &minus;1.50</span>
+        <strong class="cutoff">—</strong>
+        <small class="prob-tag">Theoretical: 6.68%</small>
+        <div class="emp-stat">—</div>
+      </div>
+    </div>
+
+    <div class="results-heading">
+      <div>
+        <h3>Standardized Student-Wise Grade Allocations</h3>
+        <p>Complete statistical record: raw score xᵢ, deviation (xᵢ − μ), standard score zᵢ, and cumulative probability Φ(zᵢ).</p>
+      </div>
+      <a class="btn btn-primary disabled" id="downloadBtn" href="/download/results">
+        ⬇ Download Statistical CSV Report
+      </a>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Register Number</th>
+            <th>Raw Score (xᵢ)</th>
+            <th>Deviation (xᵢ − μ)</th>
+            <th>Standard Score (zᵢ)</th>
+            <th>Gaussian Percentile (Φ(zᵢ))</th>
+            <th>Assigned Grade</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody">
+          <tr>
+            <td colspan="6" class="empty-cell">No analysis executed yet. Click "Run grading process" above.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grade-counts" id="gradeCounts"></div>
+  </section>
+
+  <section class="notice">
+    <b>Methodological &amp; Academic Note:</b> Norm-referenced Gaussian thresholds operate under the assumption that cohort marks follow a continuous normal distribution <i>N</i>(μ, σ²). Skewness γ₁ and excess kurtosis γ₂ should be evaluated for distribution symmetry prior to institutional adoption. Absolute passing criteria, competency minimums, and accessibility standards must supersede statistical partitioning.
+  </section>
+
+  <footer>
+    Gaussian Distribution-Based Examination Grading Analytics · Parametric Norm-Referenced Assessment Model
+  </footer>
+</main>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
